@@ -1,22 +1,22 @@
-<script src="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds/dist/figma-plugin-ds.css">
     
-<h2>Rectangle Creator</h2>
-    <p>Count: <input id="count" value="5"></p>
-    <button class="button button--secondary" id="create">Create</button>
-    <button id="cancel">Cancel</button>
-    <button>Test</button>
 
-    
+
+<h2>Tweet Creator</h2>
+      <p>Name: <input type="text" value="Your Twitter name here" id="name"></p>
+      <p>Username: <input type="text" value="Your Twitter username" id="username"></p>
+      <p>Tweet: <input type="textarea" value="Your tweet goes here. 155 characters!" id="tweet"></p>
+      <button class="button button--primary" id="create-tweet">Create Tweet</button>
 <script>
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+document.getElementById('create-tweet').onclick = () => {
+  // pull values from inputs
+  const name = document.getElementById('name').value;
+  const username = document.getElementById('username').value;
+  const tweet = document.getElementById('tweet').value;
 
+  // submit the tweet along with the inputs
+  parent.postMessage({ pluginMessage: { type: 'create-tweet', name, username, tweet } }, '*')
+}
 </script>
 
