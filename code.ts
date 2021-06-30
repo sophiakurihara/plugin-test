@@ -12,20 +12,21 @@ figma.showUI(__html__);
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
+figma.ui.resize(500,500);
 figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
 
   if(msg.type === 'create-tweet') {
 
-    const frameWidth = 800;
-    const frameHeight = 600;
-    
-    const frame = figma.createFrame()
-    frame.resizeWithoutConstraints(frameWidth, frameHeight);
-    frame.fills = [{type: 'SOLID', color: {r: 0, g: 0, b:0 }}];
-    
+    // pulling the main component
     const nodes: SceneNode[] = [];
+    const card = figma.currentPage.findOne(node => node.name == 'Tweet Card' && node.type == 'COMPONENT');
+
+    let newTweet = card.createInstance();
+
+    nodes.push(newTweet);
+
     const rect = figma.createRectangle();
       rect.x = 250;
       rect.fills = [{type: 'SOLID', color: {r: 0, g: 0, b: 0}}];
