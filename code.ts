@@ -18,9 +18,9 @@ figma.ui.onmessage = async(pluginMessage) => {
   // your HTML page is to use an object with a "type" property like this.
 
   // Is there a more efficient way to do this with Promises? Would that be too complex for a beginner?
-  await figma.loadFontAsync({ family: "SF Compact Display", style: "Bold" })
-  await figma.loadFontAsync({ family: "SF Compact Display", style: "Medium" })
-  await figma.loadFontAsync({ family: "SF Compact Display", style: "Regular" })
+  await figma.loadFontAsync({ family: "Inter", style: "Bold" })
+  await figma.loadFontAsync({ family: "Inter", style: "Medium" })
+  await figma.loadFontAsync({ family: "Inter", style: "Regular" })
 
     
     const nodes: SceneNode[] = [];
@@ -42,19 +42,27 @@ figma.ui.onmessage = async(pluginMessage) => {
     // base component within the created tweet
     let baseTweetCard = newTweet.children[0] as ComponentNode;
 
+    console.log(baseTweetCard);
+
     // default profile component in the created tweet
-    let defaultProfile= baseTweetCard.findOne(node => node.name == "Profile" && node.type == "COMPONENT") as ComponentNode;
+    let defaultProfile= baseTweetCard.findOne(node => node.name == "Profile") as ComponentNode;
+
+    console.log(defaultProfile);
     
     let defaultName = defaultProfile.findOne(node => node.name == "firstLast" && node.type == "TEXT") as TextNode;
 
+    console.log(defaultName)
+
     let defaultUsername = defaultProfile.findOne(node => node.name == "username" && node.type == "TEXT") as TextNode;
+
+    console.log(defaultUsername)
 
     // default tweet content in the created tweet
     let defaultContent = baseTweetCard.findOne(node => node.name == "tweetContent" && node.type == "TEXT") as TextNode;
 
        // if finding these children by array position, how is that determined?
 
-    console.log(newTweet.children);
+    console.log(defaultProfile);
 
     //TODO: access the Name textnode and change it in the new instance
     if ((defaultName.type !== "TEXT" && defaultName.name !== "firstLast") || 
@@ -68,7 +76,6 @@ figma.ui.onmessage = async(pluginMessage) => {
     defaultName.characters = pluginMessage.name;
     defaultUsername.characters = pluginMessage.username;
     defaultContent.characters = pluginMessage.tweet;
-
   
     //NTH: give the user an option to create a tweet with an image
     //NTH: current date/time or allow them to select their own

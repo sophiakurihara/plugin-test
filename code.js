@@ -22,9 +22,9 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
     // One way of distinguishing between different types of messages sent froms
     // your HTML page is to use an object with a "type" property like this.
     // Is there a more efficient way to do this with Promises? Would that be too complex for a beginner?
-    yield figma.loadFontAsync({ family: "SF Compact Display", style: "Bold" });
-    yield figma.loadFontAsync({ family: "SF Compact Display", style: "Medium" });
-    yield figma.loadFontAsync({ family: "SF Compact Display", style: "Regular" });
+    yield figma.loadFontAsync({ family: "Inter", style: "Bold" });
+    yield figma.loadFontAsync({ family: "Inter", style: "Medium" });
+    yield figma.loadFontAsync({ family: "Inter", style: "Regular" });
     const nodes = [];
     // pull tweet component set
     let tweetComponentSet = figma.root.findOne(node => node.type == "COMPONENT_SET" && node.name == "tweet");
@@ -36,31 +36,28 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
     let newTweet = defaultTweet.createInstance();
     // base component within the created tweet
     let baseTweetCard = newTweet.children[0];
+    console.log(baseTweetCard);
     // default profile component in the created tweet
-    let defaultProfile = baseTweetCard.findOne(node => node.name == "Profile" && node.type == "COMPONENT");
+    let defaultProfile = baseTweetCard.findOne(node => node.name == "Profile");
+    console.log(defaultProfile);
     let defaultName = defaultProfile.findOne(node => node.name == "firstLast" && node.type == "TEXT");
+    console.log(defaultName);
     let defaultUsername = defaultProfile.findOne(node => node.name == "username" && node.type == "TEXT");
+    console.log(defaultUsername);
     // default tweet content in the created tweet
     let defaultContent = baseTweetCard.findOne(node => node.name == "tweetContent" && node.type == "TEXT");
     // if finding these children by array position, how is that determined?
-    console.log(newTweet.children);
+    console.log(defaultProfile);
     //TODO: access the Name textnode and change it in the new instance
-    if (defaultName.type !== "TEXT" && defaultName.name !== "firstLast") {
+    if ((defaultName.type !== "TEXT" && defaultName.name !== "firstLast") ||
+        (defaultUsername.type !== "TEXT" && defaultUsername.name !== "username") ||
+        (defaultContent.type !== "TEXT" && defaultContent.name !== "tweetContent")) {
         figma.closePlugin("unexpected child");
         return;
     }
-    //TODO: access the Username textnode and change it in the new instance
-    if (newTweet.children[2].type !== "TEXT" && defaultName == "Username") {
-        figma.closePlugin("unexpected child");
-        return;
-    }
-    newTweet.children[2].characters = pluginMessage.username;
-    //TODO: access the Tweet textnode and change it in the new instance
-    if (newTweet.children[3].type !== "TEXT" && defaultName == "Tweet Content") {
-        figma.closePlugin("unexpected child");
-        return;
-    }
-    newTweet.children[3].characters = pluginMessage.tweet;
+    defaultName.characters = pluginMessage.name;
+    defaultUsername.characters = pluginMessage.username;
+    defaultContent.characters = pluginMessage.tweet;
     //NTH: give the user an option to create a tweet with an image
     //NTH: current date/time or allow them to select their own
     //NTH: allow option to specify # of view, retweets, likes and comments (random number generator)
