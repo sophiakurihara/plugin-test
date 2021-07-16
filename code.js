@@ -30,23 +30,20 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
     let tweetComponentSet = figma.root.findOne(node => node.type == "COMPONENT_SET" && node.name == "tweet");
     // pulling the default component (1st phase of plugin)
     // will need to write a conditional that builds specific tweet style based on user choice. maybe checkbox? pass over a value that matches the node name. 
+    // TODO: conditional to create specific tweet variant
     let defaultTweet = tweetComponentSet.defaultVariant;
     let defaultDarkTweet = tweetComponentSet.findOne(node => node.name.indexOf("Images=none, Dark mode=true") > -1);
     // create an instance of the default tweet style
     let newTweet = defaultTweet.createInstance();
     // base component within the created tweet
     let baseTweetCard = newTweet.children[0];
-    console.log(baseTweetCard);
     // default profile component in the created tweet
     let defaultProfile = baseTweetCard.findOne(node => node.name == "Profile");
-    console.log(defaultProfile);
     let defaultName = defaultProfile.findOne(node => node.name == "firstLast" && node.type == "TEXT");
-    console.log(defaultName);
     let defaultUsername = defaultProfile.findOne(node => node.name == "username" && node.type == "TEXT");
-    console.log(defaultUsername);
     // default tweet content in the created tweet
     let defaultContent = baseTweetCard.findOne(node => node.name == "tweetContent" && node.type == "TEXT");
-    // if finding these children by array position, how is that determined?
+    // if finding these children by array position, how is index determined?
     console.log(defaultProfile);
     //TODO: access the Name textnode and change it in the new instance
     if ((defaultName.type !== "TEXT" && defaultName.name !== "firstLast") ||
@@ -58,12 +55,8 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
     defaultName.characters = pluginMessage.name;
     defaultUsername.characters = pluginMessage.username;
     defaultContent.characters = pluginMessage.tweet;
-    //NTH: give the user an option to create a tweet with an image
-    //NTH: current date/time or allow them to select their own
-    //NTH: allow option to specify # of view, retweets, likes and comments (random number generator)
-    //NTH: include hashtags?
-    //TODO: create a function that filters through array of children to find the right page
-    //TODO: append the new instance to the Tweets page
+    // TODO: Use JS dateTime function to get current date and time for tweet
+    // TODO: Use random number generator for # of likes and retweets
     nodes.push(newTweet);
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
