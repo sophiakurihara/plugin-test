@@ -19,28 +19,36 @@ figma.ui.resize(500, 500);
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function* () {
-    // One way of distinguishing between different types of messages sent from
+    // One way of distinguishing between different types of messages sent froms
     // your HTML page is to use an object with a "type" property like this.
     // Is there a more efficient way to do this with Promises? Would that be too complex for a beginner?
     yield figma.loadFontAsync({ family: "SF Compact Display", style: "Bold" });
     yield figma.loadFontAsync({ family: "SF Compact Display", style: "Medium" });
     yield figma.loadFontAsync({ family: "SF Compact Display", style: "Regular" });
     const nodes = [];
-    // pulling the main component
-    const cardTemplate = figma.root.findOne(node => node.name == 'Tweet Card' && node.type == 'COMPONENT');
-    // this looks like an error but I promise it works
-    let newTweet = cardTemplate.createInstance();
-    // Accessing by Array position to demonstrate the order in which child layers are listed
-    const defaultName = newTweet.children[1].characters;
-    const defaultUsername = newTweet.children[2].characters;
-    const defaultTweet = newTweet.children[3].characters;
+    // pull tweet component set
+    let tweetComponentSet = figma.root.findOne(node => node.type == "COMPONENT_SET" && node.name == "tweet");
+    // pulling the default component (1st phase of plugin)
+    // will need to write a conditional that builds specific tweet style based on user choice. maybe checkbox? pass over a value that matches the node name. 
+    let defaultTweet = tweetComponentSet.defaultVariant;
+    let defaultDarkTweet = tweetComponentSet.findOne(node => node.name.indexOf("Images=none, Dark mode=true") > -1);
+    // create an instance of the default tweet style
+    let newTweet = defaultTweet.createInstance();
+    // base component within the created tweet
+    let baseTweetCard = newTweet.children[0];
+    // default profile component in the created tweet
+    let defaultProfile = baseTweetCard.findOne(node => node.name == "Profile" && node.type == "COMPONENT");
+    let defaultName = defaultProfile.findOne(node => node.name == "firstLast" && node.type == "TEXT");
+    let defaultUsername = defaultProfile.findOne(node => node.name == "username" && node.type == "TEXT");
+    // default tweet content in the created tweet
+    let defaultContent = baseTweetCard.findOne(node => node.name == "tweetContent" && node.type == "TEXT");
+    // if finding these children by array position, how is that determined?
     console.log(newTweet.children);
     //TODO: access the Name textnode and change it in the new instance
-    if (newTweet.children[1].type !== "TEXT" && defaultName == "Name") {
+    if (defaultName.type !== "TEXT" && defaultName.name !== "firstLast") {
         figma.closePlugin("unexpected child");
         return;
     }
-    newTweet.children[1].characters = pluginMessage.name;
     //TODO: access the Username textnode and change it in the new instance
     if (newTweet.children[2].type !== "TEXT" && defaultName == "Username") {
         figma.closePlugin("unexpected child");
@@ -53,10 +61,10 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
         return;
     }
     newTweet.children[3].characters = pluginMessage.tweet;
-    //TODO: conditional to handle tweet card height based on # of characters
     //NTH: give the user an option to create a tweet with an image
     //NTH: current date/time or allow them to select their own
-    //NTH: allow option to specify # of view, retweets, likes and comments 
+    //NTH: allow option to specify # of view, retweets, likes and comments (random number generator)
+    //NTH: include hashtags?
     //TODO: create a function that filters through array of children to find the right page
     //TODO: append the new instance to the Tweets page
     nodes.push(newTweet);
