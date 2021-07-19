@@ -25,24 +25,34 @@ figma.ui.onmessage = (pluginMessage) => __awaiter(this, void 0, void 0, function
     yield figma.loadFontAsync({ family: "Inter", style: "Bold" });
     yield figma.loadFontAsync({ family: "Inter", style: "Medium" });
     yield figma.loadFontAsync({ family: "Inter", style: "Regular" });
+    console.log(pluginMessage.darkModeState);
     const nodes = [];
     // pull tweet component set
     let tweetComponentSet = figma.root.findOne(node => node.type == "COMPONENT_SET" && node.name == "tweet");
     // pulling the default component (1st phase of plugin)
     // will need to write a conditional that builds specific tweet style based on user choice. maybe checkbox? pass over a value that matches the node name. 
+    let defaultTweet;
     // TODO: conditional to create specific tweet variant
-    let defaultTweet = tweetComponentSet.defaultVariant;
-    let defaultDarkTweet = tweetComponentSet.findOne(node => node.name.indexOf("Images=none, Dark mode=true") > -1);
+    if (pluginMessage.darkModeState === true) {
+        // not working???
+        defaultTweet = tweetComponentSet.findOne(node => node.type == "COMPONENT" && node.name == "Images=none, Dark mode=true");
+    }
+    else {
+        defaultTweet = tweetComponentSet.findOne(node => node.type == "COMPONENT" && node.name == "Images=none, Dark mode=false");
+    }
+    console.log(defaultTweet);
+    // let defaultDarkTweet = tweetComponentSet.findOne(node => node.name.indexOf("Images=none, Dark mode=true") > -1) as ComponentNode;
     // create an instance of the default tweet style
     let newTweet = defaultTweet.createInstance();
+    console.log(newTweet);
     // base component within the created tweet
-    let baseTweetCard = newTweet.children[0];
+    // let baseTweetCard = newTweet.children[0] as ComponentNode;
     // default profile component in the created tweet
-    let defaultProfile = baseTweetCard.findOne(node => node.name == "Profile");
+    let defaultProfile = newTweet.findOne(node => node.name == "Profile");
     let defaultName = defaultProfile.findOne(node => node.name == "firstLast" && node.type == "TEXT");
     let defaultUsername = defaultProfile.findOne(node => node.name == "username" && node.type == "TEXT");
     // default tweet content in the created tweet
-    let defaultContent = baseTweetCard.findOne(node => node.name == "tweetContent" && node.type == "TEXT");
+    let defaultContent = newTweet.findOne(node => node.name == "tweetContent" && node.type == "TEXT");
     // if finding these children by array position, how is index determined?
     console.log(defaultProfile);
     //TODO: access the Name textnode and change it in the new instance
